@@ -1,9 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
+
 from src.presentation.student_form import StudentFrame
 from src.presentation.class_form import ClassFrame
 from src.presentation.course_form import CourseFrame
 from src.presentation.grade_form import GradeFrame
+from src.presentation.enrollment_form import EnrollmentFrame
+
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -18,9 +21,12 @@ class MainWindow(tk.Tk):
 
         ttk.Button(top, text="Sinh viên", command=self.show_student).pack(side=tk.LEFT, padx=5)
         ttk.Button(top, text="Lớp", command=self.show_class).pack(side=tk.LEFT, padx=5)
-        ttk.Button(top, text="Thoát", command=self.quit).pack(side=tk.RIGHT, padx=10)
-        ttk.Button(top, text="Khóa học", command=self.show_course).pack(side=tk.LEFT)
+        ttk.Button(top, text="Khóa học", command=self.show_course).pack(side=tk.LEFT, padx=5)
         ttk.Button(top, text="Điểm", command=self.show_grade).pack(side=tk.LEFT, padx=5)
+        ttk.Button(top, text="Đăng ký học phần", command=self.show_enrollment).pack(side=tk.LEFT, padx=5)
+
+        ttk.Button(top, text="Thoát", command=self.quit).pack(side=tk.RIGHT, padx=10)
+
         # ===== CONTENT AREA =====
         self.content = tk.Frame(self)
         self.content.pack(fill=tk.BOTH, expand=True)
@@ -32,9 +38,11 @@ class MainWindow(tk.Tk):
     def clear_content(self):
         if self.current_frame:
             self.current_frame.destroy()
+            self.current_frame = None
 
     def show_home(self):
         self.clear_content()
+
         frame = tk.Frame(self.content)
         frame.pack(fill=tk.BOTH, expand=True)
 
@@ -50,7 +58,8 @@ class MainWindow(tk.Tk):
                 "• Quản lý sinh viên\n"
                 "• Quản lý lớp học\n"
                 "• Quản lý khóa học\n"
-                "• Quản lý điểm\n\n"
+                "• Quản lý điểm\n"
+                "• Đăng ký học phần\n\n"
                 "👉 Chọn chức năng ở thanh trên"
             ),
             font=("Arial", 11),
@@ -79,6 +88,17 @@ class MainWindow(tk.Tk):
         self.current_frame = GradeFrame(self.content)
         self.current_frame.pack(fill=tk.BOTH, expand=True)
 
-if __name__ == "__main__":
+    def show_enrollment(self):
+        self.clear_content()
+        self.current_frame = EnrollmentFrame(self.content)
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
+
+
+# ===== ENTRY POINT =====
+def main():
     app = MainWindow()
     app.mainloop()
+
+
+if __name__ == "__main__":
+    main()

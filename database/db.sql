@@ -1,31 +1,32 @@
-CREATE DATABASE school_management
+CREATE DATABASE IF NOT EXISTS school_management
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE school_management;
 
--- Bảng người dùng
+-- ======================
+-- BẢNG NGƯỜI DÙNG
+-- ======================
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE,
     password VARCHAR(255),
-    role ENUM('admin','teacher','student')
+    role ENUM('admin','teacher','student'),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Bảng lớp học
-CREATE TABLE grades (
-    student_id INT,
-    course_class_id INT,
-    score FLOAT CHECK (score BETWEEN 0 AND 10),
-
-    PRIMARY KEY (student_id, course_class_id),
-
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (course_class_id) REFERENCES course_classes(id)
+-- ======================
+-- BẢNG LỚP (BẮT BUỘC)
+-- ======================
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_name VARCHAR(50) UNIQUE NOT NULL,
+    major VARCHAR(100)
 );
 
-
--- Bảng sinh viên
+-- ======================
+-- BẢNG SINH VIÊN
+-- ======================
 CREATE TABLE students (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_code VARCHAR(20) UNIQUE NOT NULL,
@@ -40,17 +41,9 @@ CREATE TABLE students (
         ON DELETE SET NULL
 );
 
--- Bảng lớp học phần đăng ký
-CREATE TABLE enrollments (
-    student_id INT,
-    course_class_id INT,
-    PRIMARY KEY (student_id, course_class_id),
-
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (course_class_id) REFERENCES course_classes(id)
-);
-
--- Bảng môn học
+-- ======================
+-- BẢNG MÔN HỌC
+-- ======================
 CREATE TABLE courses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_code VARCHAR(20) UNIQUE NOT NULL,
@@ -58,25 +51,9 @@ CREATE TABLE courses (
     credit INT NOT NULL
 );
 
--- Bảng điểm
-CREATE TABLE grades (
-    student_id INT,
-    course_id INT,
-    score FLOAT CHECK (score BETWEEN 0 AND 10),
-    PRIMARY KEY (student_id, course_id),
-
-    CONSTRAINT fk_grade_student
-        FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_grade_course
-        FOREIGN KEY (course_id)
-        REFERENCES courses(id)
-        ON DELETE CASCADE
-);
-
--- Giáo viên
+-- ======================
+-- GIÁO VIÊN
+-- ======================
 CREATE TABLE teachers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     teacher_code VARCHAR(20) UNIQUE NOT NULL,
@@ -85,7 +62,9 @@ CREATE TABLE teachers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Bảng lớp học phần
+-- ======================
+-- LỚP HỌC PHẦN
+-- ======================
 CREATE TABLE course_classes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
@@ -97,7 +76,35 @@ CREATE TABLE course_classes (
     FOREIGN KEY (teacher_id) REFERENCES teachers(id)
 );
 
--- Bảng học kỳ
+-- ======================
+-- ĐĂNG KÝ HỌC PHẦN
+-- ======================
+CREATE TABLE enrollments (
+    student_id INT,
+    course_class_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (student_id, course_class_id),
+
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (course_class_id) REFERENCES course_classes(id)
+);
+
+-- ======================
+-- ĐIỂM
+-- ======================
+CREATE TABLE grades (
+    student_id INT,
+    course_id INT,
+    score FLOAT CHECK (score BETWEEN 0 AND 10),
+    PRIMARY KEY (student_id, course_id),
+
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+-- ======================
+-- HỌC KỲ
+-- ======================
 CREATE TABLE semesters (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(20),
@@ -105,8 +112,9 @@ CREATE TABLE semesters (
     end_date DATE
 );
 
-
--- Bảng quy định điểm
+-- ======================
+-- QUY ĐỊNH ĐIỂM
+-- ======================
 CREATE TABLE grade_rules (
     course_id INT,
     min_score FLOAT,
