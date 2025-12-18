@@ -20,3 +20,6 @@ def edit_course(id, code, name, credit):
     if credit <= 0:
         raise ValueError("Số tín chỉ phải > 0")
     update_course(id, code, name, credit)
+
+def get_all_courses():
+    return fetch_courses()

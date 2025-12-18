@@ -38,7 +38,8 @@ CREATE TABLE students (
     CONSTRAINT fk_student_class
         FOREIGN KEY (class_id)
         REFERENCES classes(id)
-        ON DELETE SET NULL
+        ON DELETE SET NULL,
+        credit INT NOT NULL DEFAULT 0
 );
 
 -- ======================
@@ -49,6 +50,16 @@ CREATE TABLE courses (
     course_code VARCHAR(20) UNIQUE NOT NULL,
     course_name VARCHAR(100) NOT NULL,
     credit INT NOT NULL
+);
+
+-- ======================
+-- CÀI ĐẶT HỌC PHÍ
+-- ======================
+CREATE TABLE tuition_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    system_name VARCHAR(50),     -- Chính quy, Chất lượng cao...
+    price_per_credit FLOAT,      -- Giá 1 tín chỉ
+    coefficient FLOAT DEFAULT 1  -- Hệ số
 );
 
 -- ======================

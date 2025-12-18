@@ -34,6 +34,14 @@ INSERT INTO courses (course_code, course_name, credit) VALUES
 ('CS103', 'Cấu trúc dữ liệu', 4);
 
 -- ======================
+-- TUITION SETTINGS
+-- ======================
+INSERT INTO tuition_settings (system_name, price_per_credit, coefficient)
+VALUES
+('Chính quy', 450000, 1),
+('CLC', 450000, 1.3);
+
+-- ======================
 -- TEACHERS
 -- ======================
 INSERT INTO teachers (teacher_code, full_name, degree) VALUES

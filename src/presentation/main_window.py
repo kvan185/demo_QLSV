@@ -6,7 +6,11 @@ from src.presentation.class_form import ClassFrame
 from src.presentation.course_form import CourseFrame
 from src.presentation.grade_form import GradeFrame
 from src.presentation.enrollment_form import EnrollmentFrame
-
+from src.presentation.teacher_form import TeacherFrame
+from src.presentation.course_class_form import CourseClassFrame
+from src.presentation.semester_form import SemesterFrame
+from src.presentation.grade_rule_form import GradeRuleFrame
+from src.presentation.tuition_form import TuitionFrame
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -24,7 +28,13 @@ class MainWindow(tk.Tk):
         ttk.Button(top, text="Khóa học", command=self.show_course).pack(side=tk.LEFT, padx=5)
         ttk.Button(top, text="Điểm", command=self.show_grade).pack(side=tk.LEFT, padx=5)
         ttk.Button(top, text="Đăng ký học phần", command=self.show_enrollment).pack(side=tk.LEFT, padx=5)
-
+        ttk.Button(top, text="Giáo viên", command=self.show_teacher).pack(side=tk.LEFT, padx=5)
+        ttk.Button(top, text="Lớp học phần", command=self.show_course_class).pack(side=tk.LEFT, padx=5)
+        ttk.Button(top, text="Học kỳ", command=self.show_semester).pack(side=tk.LEFT, padx=5)
+        ttk.Button(top, text="Quy định điểm", command=self.show_grade_rule).pack(side=tk.LEFT, padx=5)
+        ttk.Button(top, text="Học phí", command=lambda: self.show_tuition()).pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(top, text="Trang chủ", command=self.show_home).pack(side=tk.LEFT, padx=5)
         ttk.Button(top, text="Thoát", command=self.quit).pack(side=tk.RIGHT, padx=10)
 
         # ===== CONTENT AREA =====
@@ -93,7 +103,31 @@ class MainWindow(tk.Tk):
         self.current_frame = EnrollmentFrame(self.content)
         self.current_frame.pack(fill=tk.BOTH, expand=True)
 
+    def show_teacher(self):
+        self.clear_content()
+        self.current_frame = TeacherFrame(self.content)
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
 
+    def show_course_class(self):
+        self.clear_content()
+        self.current_frame = CourseClassFrame(self.content)
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        
+    def show_semester(self):
+        self.clear_content()
+        self.current_frame = SemesterFrame(self.content)
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        
+    def show_grade_rule(self):
+        self.clear_content()
+        self.current_frame = GradeRuleFrame(self.content)
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        
+    def show_tuition(self):
+        self.clear_content()
+        self.current_frame = TuitionFrame(self.content)
+        self.current_frame.pack(fill=tk.BOTH, expand=True)    
+    
 # ===== ENTRY POINT =====
 def main():
     app = MainWindow()
