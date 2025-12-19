@@ -9,37 +9,11 @@ USE school_management;
 -- ======================
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
+    username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255),
-    role ENUM('admin','teacher','student'),
+    role ENUM('admin','manager','teacher','student'),
+    ref_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ======================
--- BẢNG LỚP (BẮT BUỘC)
--- ======================
-CREATE TABLE classes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    class_name VARCHAR(50) UNIQUE NOT NULL,
-    major VARCHAR(100)
-);
-
--- ======================
--- BẢNG SINH VIÊN
--- ======================
-CREATE TABLE students (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    student_code VARCHAR(20) UNIQUE NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    birth_year INT,
-    class_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_student_class
-        FOREIGN KEY (class_id)
-        REFERENCES classes(id)
-        ON DELETE SET NULL,
-        credit INT NOT NULL DEFAULT 0
 );
 
 -- ======================
@@ -74,6 +48,21 @@ CREATE TABLE teachers (
 );
 
 -- ======================
+-- BẢNG LỚP (BẮT BUỘC)
+-- ======================
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_name VARCHAR(50) UNIQUE NOT NULL,
+    major VARCHAR(100),
+    advisor_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_class_advisor
+        FOREIGN KEY (advisor_id)
+        REFERENCES teachers(id)
+        ON DELETE SET NULL
+);
+
+-- ======================
 -- LỚP HỌC PHẦN
 -- ======================
 CREATE TABLE course_classes (
@@ -88,6 +77,24 @@ CREATE TABLE course_classes (
 );
 
 -- ======================
+-- BẢNG SINH VIÊN
+-- ======================
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_code VARCHAR(20) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    birth_year INT,
+    class_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_student_class
+        FOREIGN KEY (class_id)
+        REFERENCES classes(id)
+        ON DELETE SET NULL,
+        credit INT NOT NULL DEFAULT 0
+);
+
+-- ======================
 -- ĐĂNG KÝ HỌC PHẦN
 -- ======================
 CREATE TABLE enrollments (
@@ -98,6 +105,40 @@ CREATE TABLE enrollments (
 
     FOREIGN KEY (student_id) REFERENCES students(id),
     FOREIGN KEY (course_class_id) REFERENCES course_classes(id)
+);
+
+-- ======================
+-- LỊCH HỌC PHẦN
+-- ======================
+CREATE TABLE class_schedules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_class_id INT NOT NULL,
+    day_of_week TINYINT NOT NULL, -- 2 = Thứ 2 ... 7 = Thứ 7
+    start_period INT NOT NULL,    -- tiết bắt đầu
+    periods INT NOT NULL,         -- số tiết / buổi
+    room VARCHAR(50),
+    total_sessions INT NOT NULL,  -- tổng số buổi (vd: 15)
+
+    FOREIGN KEY (course_class_id)
+        REFERENCES course_classes(id)
+        ON DELETE CASCADE
+);
+
+-- ======================
+-- LỊCH THI
+-- ======================
+CREATE TABLE exam_schedules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_class_id INT NOT NULL,
+    exam_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    duration INT NOT NULL,     -- phút
+    room VARCHAR(50),
+    exam_type VARCHAR(20),     -- Giữa kỳ / Cuối kỳ
+
+    FOREIGN KEY (course_class_id)
+        REFERENCES course_classes(id)
+        ON DELETE CASCADE
 );
 
 -- ======================

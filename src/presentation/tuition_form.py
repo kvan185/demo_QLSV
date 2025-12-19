@@ -1,12 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-from src.business.tuition_service import (
-    get_tuition_settings,
-    get_course_fee
-)
+from src.business.tuition_service import get_tuition_settings, get_course_fee
 from src.business.course_service import get_all_courses
-
 
 class TuitionFrame(tk.Frame):
     def __init__(self, parent):

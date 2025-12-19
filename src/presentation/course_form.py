@@ -1,11 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from src.business.course_service import (
-    get_courses,
-    add_course,
-    edit_course
-)
-
+from src.business.course_service import  get_courses, add_course, edit_course
 
 class CourseFrame(tk.Frame):
     def __init__(self, parent):

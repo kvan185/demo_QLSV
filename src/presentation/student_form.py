@@ -2,11 +2,13 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from src.business.student_service import (
     add_student,
-    get_students,
     edit_student,
-    get_class
+    search_students
 )
-
+from src.business.class_service import (
+    get_classes,
+    get_classes_for_combobox
+)
 
 class StudentFrame(tk.Frame):
     def __init__(self, parent):
@@ -112,7 +114,7 @@ class StudentFrame(tk.Frame):
 
         self.class_map["Tất cả"] = None
 
-        for cid, cname in get_class():
+        for cid, cname in get_classes_for_combobox():
             filter_values.append(cname)
             form_values.append(cname)
             self.class_map[cname] = cid
@@ -134,7 +136,7 @@ class StudentFrame(tk.Frame):
 
         self.table.delete(*self.table.get_children())
 
-        for s in get_students(keyword, class_id, order):
+        for s in search_students(keyword, class_id, order):
             self.table.insert("", tk.END, values=s)
 
     def on_select(self, event):

@@ -1,12 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from src.business.enrollment_service import (
-    add_enrollment,
-    get_enrollments
-)
+from src.business.student_service import get_student_enrollments, enroll_course
 from src.business.student_service import get_all_students
-from src.business.class_service import get_all_course_classes
-
+from src.business.course_service import get_all_course_classes
 
 class EnrollmentFrame(tk.Frame):
     def __init__(self, parent):
@@ -76,14 +72,17 @@ class EnrollmentFrame(tk.Frame):
 
     def load_table(self):
         self.table.delete(*self.table.get_children())
-        for row in get_enrollments():
+        if not self.cb_student.get():
+            return
+        student_id = self.student_map[self.cb_student.get()]
+        for row in get_student_enrollments(student_id):
             self.table.insert("", tk.END, values=row)
 
     def add(self):
         try:
             student_id = self.student_map[self.cb_student.get()]
             class_id = self.class_map[self.cb_class.get()]
-            add_enrollment(student_id, class_id)
+            enroll_course(student_id, class_id)
             self.load_table()
             messagebox.showinfo("OK", "Đăng ký thành công")
         except Exception as e:

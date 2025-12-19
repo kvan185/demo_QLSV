@@ -1,95 +1,135 @@
 from src.data_access.db import get_connection
 
 
-# =========================
-# DÙNG CHO STUDENT FORM
-# =========================
-def fetch_classes_for_student():
-    conn = get_connection()
-    cursor = conn.cursor()
+# =======================
+# CLASS – FULL DATA
+# =======================
 
-    cursor.execute(
-        "SELECT id, class_name FROM classes ORDER BY class_name"
-    )
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
-
-
-# =========================
-# DÙNG CHO CLASS FORM (SEARCH + SORT)
-# =========================
 def fetch_classes(keyword="", order="ASC"):
-    if order not in ("ASC", "DESC"):
-        order = "ASC"
-
     conn = get_connection()
     cursor = conn.cursor()
 
     sql = f"""
-    SELECT id, class_name, major
-    FROM classes
-    WHERE class_name LIKE %s OR major LIKE %s
-    ORDER BY id {order}
-    LIMIT 25
+        SELECT
+            c.id,
+            c.class_name,
+            c.major,
+            t.full_name AS advisor_name
+        FROM classes c
+        LEFT JOIN teachers t ON c.advisor_id = t.id
+        WHERE c.class_name LIKE %s
+        ORDER BY c.class_name {order}
     """
 
-    like = f"%{keyword}%"
-    cursor.execute(sql, (like, like))
+    cursor.execute(sql, (f"%{keyword}%",))
     rows = cursor.fetchall()
     conn.close()
     return rows
 
 
-# =========================
-# THÊM LỚP
-# =========================
+# =======================
+# CLASS – COMBOBOX
+# =======================
+
+def fetch_classes_simple():
+    """Dùng cho combobox"""
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, class_name
+        FROM classes
+        ORDER BY class_name
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
+# =======================
+# CRUD
+# =======================
+
 def insert_class(class_name, major):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO classes (class_name, major) VALUES (%s, %s)",
-        (class_name, major)
-    )
+    cursor.execute("""
+        INSERT INTO classes (class_name, major)
+        VALUES (%s, %s)
+    """, (class_name, major))
+
     conn.commit()
     conn.close()
 
 
-# =========================
-# CẬP NHẬT LỚP
-# =========================
-def update_class(id, class_name, major):
+def update_class(class_id, class_name, major):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "UPDATE classes SET class_name=%s, major=%s WHERE id=%s",
-        (class_name, major, id)
-    )
+    cursor.execute("""
+        UPDATE classes
+        SET class_name=%s,
+            major=%s
+        WHERE id=%s
+    """, (class_name, major, class_id))
+
     conn.commit()
     conn.close()
 
 
-# =========================
-# DÙNG CHO ENROLLMENT
-# =========================
-def fetch_all_course_classes():
+def delete_class(class_id):
     conn = get_connection()
     cursor = conn.cursor()
 
-    sql = """
-    SELECT
-        cc.id,
-        c.course_name,
-        cc.semester,
-        cc.school_year
-    FROM course_classes cc
-    JOIN courses c ON cc.course_id = c.id
-    ORDER BY c.course_name
-    """
+    cursor.execute("DELETE FROM classes WHERE id=%s", (class_id,))
+    conn.commit()
+    conn.close()
 
-    cursor.execute(sql)
+
+# =======================
+# ADVISOR (CỐ VẤN)
+# =======================
+
+def assign_advisor(class_id, teacher_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE classes
+        SET advisor_id=%s
+        WHERE id=%s
+    """, (teacher_id, class_id))
+
+    conn.commit()
+    conn.close()
+
+
+def remove_advisor(class_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE classes
+        SET advisor_id=NULL
+        WHERE id=%s
+    """, (class_id,))
+
+    conn.commit()
+    conn.close()
+
+
+def fetch_advisor_class(teacher_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, class_name
+        FROM classes
+        WHERE advisor_id=%s
+    """, (teacher_id,))
+
     rows = cursor.fetchall()
     conn.close()
     return rows

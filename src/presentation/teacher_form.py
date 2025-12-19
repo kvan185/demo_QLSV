@@ -1,13 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-from src.business.teacher_service import (
-    add_teacher,
-    edit_teacher,
-    get_teachers,
-    get_all_teachers
-)
-
+from src.business.teacher_service import get_teachers, add_teacher, edit_teacher
 
 class TeacherFrame(tk.Frame):
     def __init__(self, parent):

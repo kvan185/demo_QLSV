@@ -1,14 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-from src.business.course_class_service import (
-    add_course_class,
-    edit_course_class,
-    get_course_classes
-)
+from src.business.course_service import get_course_classes, add_course_class, edit_course_class
 from src.business.course_service import get_all_courses
 from src.business.teacher_service import get_all_teachers
-
 
 class CourseClassFrame(tk.Frame):
     def __init__(self, parent):

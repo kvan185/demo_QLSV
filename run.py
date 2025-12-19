@@ -1,12 +1,8 @@
-import sys
-import os
+from src.presentation.login_form import LoginForm
 
-# Thêm thư mục gốc project vào PYTHONPATH
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
-
-# Chạy main_window
-from src.presentation.main_window import main
+def main():
+    app = LoginForm()
+    app.mainloop()
 
 if __name__ == "__main__":
     main()

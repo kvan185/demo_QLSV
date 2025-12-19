@@ -1,12 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-from src.business.semester_service import (
-    add_semester,
-    edit_semester,
-    get_semesters
-)
-
+from src.business.semester_service import  get_semesters, add_semester, edit_semester
 
 class SemesterFrame(tk.Frame):
     def __init__(self, parent):

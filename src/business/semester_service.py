@@ -1,10 +1,4 @@
-from src.data_access.semester_dao import (
-    insert_semester,
-    update_semester,
-    fetch_semesters,
-    fetch_all_semesters
-)
-
+from src.data_access.semester_dao import insert_semester, update_semester, fetch_semesters, fetch_all_semesters
 
 def add_semester(name, start_date, end_date):
     if not name:

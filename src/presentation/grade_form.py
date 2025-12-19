@@ -1,13 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from src.business.grade_service import (
-    get_grades,
-    add_grade,
-    edit_grade
-)
-from src.business.student_service import get_students
+from src.business.grade_service import get_grades, add_grade, edit_grade
+from src.business.student_service import get_all_students
 from src.business.course_service import get_courses
-
 
 class GradeFrame(tk.Frame):
     def __init__(self, parent):
@@ -95,7 +90,7 @@ class GradeFrame(tk.Frame):
     # ================= LOGIC =================
     def load_students(self):
         values = []
-        for sid, code, name, *_ in get_students():
+        for sid, code, name, *_ in get_all_students():
             label = f"{name} (ID:{sid})"
             self.student_map[label] = sid
             values.append(label)

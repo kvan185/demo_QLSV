@@ -1,9 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-
-from src.business.grade_rule_service import get_grade_rules, add_or_update_rule
+from src.business.grade_service import get_grade_rules, add_or_update_rule
 from src.business.course_service import get_all_courses
-
 
 class GradeRuleFrame(tk.Frame):
     def __init__(self, parent):
