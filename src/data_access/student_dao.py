@@ -168,3 +168,40 @@ def delete_enrollment(student_id, course_class_id):
 
     conn.commit()
     conn.close()
+
+
+def fetch_students_by_class(class_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, student_code, full_name
+        FROM students
+        WHERE class_id = %s
+        ORDER BY full_name
+    """, (class_id,))
+
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+def fetch_student_by_id(student_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            s.id,
+            s.student_code,
+            s.full_name,
+            s.birth_year,
+            c.id AS class_id,
+            c.class_name
+        FROM students s
+        LEFT JOIN classes c ON s.class_id = c.id
+        WHERE s.id = %s
+    """, (student_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+    return row

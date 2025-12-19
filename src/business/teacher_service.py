@@ -10,7 +10,8 @@ from src.data_access.teacher_dao import (
     fetch_all_teachers,
     fetch_all_classes_with_advisor,
     fetch_teachers_simple,
-    fetch_classes_without_advisor
+    fetch_classes_without_advisor,
+    fetch_teacher_by_id
 )
 
 def add_teacher(code, name, degree):
@@ -50,7 +51,17 @@ def set_advisor(class_id, teacher_id):
     assign_advisor(class_id, teacher_id)
 
 def get_advisor_class(teacher_id):
-    return fetch_advisor_class(teacher_id)
+    """
+    Return: (class_id, class_name) hoặc None
+    """
+    rows = fetch_advisor_class(teacher_id)
+
+    if not rows:
+        return None
+
+    class_id, class_name, *_ = rows[0]
+    return class_id, class_name
+
 
 def set_advisor_for_class(class_id, teacher_id):
     if not class_id or not teacher_id:
@@ -66,6 +77,9 @@ def get_all_teachers():
     """id, teacher_code, full_name"""
     return fetch_teachers_full()
 
-def get_all_teachers_simple():
+def get_teachers_for_combobox():
     """id, full_name"""
     return fetch_teachers_simple()
+
+def get_teacher_by_id(teacher_id):
+    return fetch_teacher_by_id(teacher_id)

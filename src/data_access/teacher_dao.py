@@ -169,3 +169,17 @@ def fetch_teachers_simple():
     rows = cursor.fetchall()
     conn.close()
     return rows
+
+def fetch_teacher_by_id(teacher_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, teacher_code, full_name, degree
+        FROM teachers
+        WHERE id=%s
+    """, (teacher_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+    return row

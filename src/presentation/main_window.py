@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 
 # ===== IMPORT CÁC FORM =====
 from src.presentation.student_form import StudentFrame
@@ -17,16 +17,21 @@ from src.presentation.exam_schedule_form import ExamScheduleFrame
 from src.presentation.timetable_form import TimetableFrame
 from src.presentation.admin_assign_advisor_form import AdminAssignAdvisorForm
 from src.presentation.advisor_class_form import AdvisorClassFrame
+from src.presentation.profile_form import ProfileFrame
 
-class MainWindow(tk.Tk):
-    def __init__(self, user):
-        super().__init__()
 
-        self.user = user   # {id, username, role, ref_id}
+class MainWindow(tk.Frame):
+    def __init__(self, parent, user, on_logout):
+        super().__init__(parent)
+
+        self.parent = parent
+        self.user = user
+        self.on_logout = on_logout
         self.current_frame = None
 
-        self.title("Hệ thống quản lý trường học")
-        self.geometry("1200x600")
+        # Cấu hình cửa sổ chính
+        self.parent.title("Hệ thống quản lý trường học")
+        self.parent.geometry("1200x600")
 
         # ===== TOP BAR =====
         self.top = tk.Frame(self, bg="#f0f0f0", pady=5)
@@ -43,82 +48,59 @@ class MainWindow(tk.Tk):
     def build_menu(self):
         role = self.user["role"]
 
-        # Xóa menu cũ (nếu có)
         for w in self.top.winfo_children():
             w.destroy()
 
-        # ===== COMMON =====
         ttk.Button(self.top, text="Trang chủ", command=self.show_home)\
             .pack(side=tk.LEFT, padx=5)
 
         # ===== STUDENT =====
         if role == "student":
-            ttk.Button(self.top, text="Thời khóa biểu", command=self.show_timetable)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lịch thi", command=self.show_exam_schedule)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Học phí", command=self.show_tuition)\
-                .pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Thời khóa biểu", command=self.show_timetable).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lịch thi", command=self.show_exam_schedule).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Học phí", command=self.show_tuition).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Hồ sơ", command=self.show_profile).pack(side=tk.LEFT, padx=5)
 
         # ===== TEACHER =====
         elif role == "teacher":
-            ttk.Button(self.top, text="Lớp học phần", command=self.show_course_class)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lịch dạy", command=self.show_class_schedule)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Nhập điểm", command=self.show_grade)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lớp cố vấn", command=self.show_advisor)\
-                .pack(side=tk.LEFT)
+            ttk.Button(self.top, text="Lớp học phần", command=self.show_course_class).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lịch dạy", command=self.show_class_schedule).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Nhập điểm", command=self.show_grade).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lớp cố vấn", command=self.show_advisor).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Hồ sơ", command=self.show_profile).pack(side=tk.LEFT, padx=5)
 
         # ===== MANAGER =====
         elif role == "manager":
-            ttk.Button(self.top, text="Lớp", command=self.show_class)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Khóa học", command=self.show_course)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Giáo viên", command=self.show_teacher)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lớp học phần", command=self.show_course_class)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Học kỳ", command=self.show_semester)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Gán cố vấn", command=self.show_assign_advisor)\
-                .pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lớp", command=self.show_class).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Khóa học", command=self.show_course).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Giáo viên", command=self.show_teacher).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lớp học phần", command=self.show_course_class).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Học kỳ", command=self.show_semester).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Gán cố vấn", command=self.show_assign_advisor).pack(side=tk.LEFT, padx=5)
 
         # ===== ADMIN =====
         elif role == "admin":
-            ttk.Button(self.top, text="Sinh viên", command=self.show_student)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Giáo viên", command=self.show_teacher)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lớp", command=self.show_class)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Khóa học", command=self.show_course)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lớp học phần", command=self.show_course_class)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Đăng ký HP", command=self.show_enrollment)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Quy định điểm", command=self.show_grade_rule)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Học phí", command=self.show_tuition)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lịch học", command=self.show_class_schedule)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Lịch thi", command=self.show_exam_schedule)\
-                .pack(side=tk.LEFT, padx=5)
-            ttk.Button(self.top, text="Gán cố vấn", command=self.show_assign_advisor)\
-                .pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Sinh viên", command=self.show_student).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Giáo viên", command=self.show_teacher).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lớp", command=self.show_class).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Khóa học", command=self.show_course).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lớp học phần", command=self.show_course_class).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Đăng ký HP", command=self.show_enrollment).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Quy định điểm", command=self.show_grade_rule).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Học phí", command=self.show_tuition).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lịch học", command=self.show_class_schedule).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Lịch thi", command=self.show_exam_schedule).pack(side=tk.LEFT, padx=5)
+            ttk.Button(self.top, text="Gán cố vấn", command=self.show_assign_advisor).pack(side=tk.LEFT, padx=5)
 
-        # ===== RIGHT SIDE =====
+        # ===== RIGHT =====
+        display_name = self.user.get("full_name", self.user["username"])
         ttk.Label(
             self.top,
-            text=f"👤 {self.user['username']} ({role})",
+            text=f"👤 {display_name} [{role.upper()}]",
             foreground="blue"
         ).pack(side=tk.RIGHT, padx=10)
 
-        ttk.Button(self.top, text="Thoát", command=self.quit)\
+        ttk.Button(self.top, text="Thoát", command=self.on_logout)\
             .pack(side=tk.RIGHT, padx=5)
 
     # ================= CORE =================
@@ -129,23 +111,15 @@ class MainWindow(tk.Tk):
 
     def show_home(self):
         self.clear_content()
-
         frame = tk.Frame(self.content)
         frame.pack(fill=tk.BOTH, expand=True)
 
-        tk.Label(
-            frame,
-            text="👋 Chào mừng đến với Hệ thống Quản lý Trường học",
-            font=("Arial", 18)
-        ).pack(pady=30)
+        tk.Label(frame, text="👋 Chào mừng đến với Hệ thống Quản lý Trường học",
+                 font=("Arial", 18)).pack(pady=30)
 
         tk.Label(
             frame,
-            text=(
-                f"Xin chào: {self.user['username']}\n"
-                f"Vai trò: {self.user['role'].upper()}\n\n"
-                "👉 Vui lòng chọn chức năng trên thanh menu"
-            ),
+            text=f"Xin chào: {self.user['username']}\nVai trò: {self.user['role'].upper()}",
             font=("Arial", 12),
             justify="center"
         ).pack()
@@ -153,53 +127,31 @@ class MainWindow(tk.Tk):
         self.current_frame = frame
 
     # ================= SHOW FORM =================
-    def show_student(self):
-        self._show(StudentFrame)
+    def show_student(self): self._show(StudentFrame)
+    def show_class(self): self._show(ClassFrame)
+    def show_course(self): self._show(CourseFrame)
+    def show_grade(self): self._show(GradeFrame)
+    def show_enrollment(self): self._show(EnrollmentFrame)
+    def show_teacher(self): self._show(TeacherFrame)
+    def show_course_class(self): self._show(CourseClassFrame)
+    def show_semester(self): self._show(SemesterFrame)
+    def show_grade_rule(self): self._show(GradeRuleFrame)
+    def show_tuition(self): self._show(TuitionFrame)
+    def show_class_schedule(self): self._show(ClassScheduleFrame)
+    def show_exam_schedule(self): self._show(ExamScheduleFrame)
+    def show_timetable(self): self._show(TimetableFrame)
 
-    def show_class(self):
-        self._show(ClassFrame)
-
-    def show_course(self):
-        self._show(CourseFrame)
-
-    def show_grade(self):
-        self._show(GradeFrame)
-
-    def show_enrollment(self):
-        self._show(EnrollmentFrame)
-
-    def show_teacher(self):
-        self._show(TeacherFrame)
-
-    def show_course_class(self):
-        self._show(CourseClassFrame)
-
-    def show_semester(self):
-        self._show(SemesterFrame)
-
-    def show_grade_rule(self):
-        self._show(GradeRuleFrame)
-
-    def show_tuition(self):
-        self._show(TuitionFrame)
-
-    def show_class_schedule(self):
-        self._show(ClassScheduleFrame)
-
-    def show_exam_schedule(self):
-        self._show(ExamScheduleFrame)
-
-    def show_timetable(self):
-        self._show(TimetableFrame)
-        
     def show_advisor(self):
-        self._show(AdvisorClassFrame)
-        
+        self._show(AdvisorClassFrame, self.user["id"])
+
     def show_assign_advisor(self):
         self._show(AdminAssignAdvisorForm)
 
+    def show_profile(self):
+        self._show(ProfileFrame, self.user)
+
     # ================= HELPER =================
-    def _show(self, FrameClass):
+    def _show(self, FrameClass, *args):
         self.clear_content()
-        self.current_frame = FrameClass(self.content)
+        self.current_frame = FrameClass(self.content, *args)
         self.current_frame.pack(fill=tk.BOTH, expand=True)

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from src.business.teacher_service import get_all_teachers, get_all_classes_status, set_advisor_for_class
+from src.business.teacher_service import get_all_teachers, get_all_classes_status, set_advisor_for_class, get_teachers_for_combobox
 
 class AdminAssignAdvisorForm(tk.Frame):
     def __init__(self, parent):
@@ -135,7 +135,7 @@ class AdminAssignAdvisorForm(tk.Frame):
         self.teacher_map.clear()
         values = []
 
-        for tid, name in get_all_teachers():
+        for tid, name in get_teachers_for_combobox():
             self.teacher_map[name] = tid
             values.append(name)
 
